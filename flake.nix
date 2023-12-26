@@ -14,6 +14,20 @@
         };
       in {
         devShell =
-          pkgs.mkShell { packages = with pkgs; [ ]; };
+          pkgs.mkShell.override { stdenv = pkgs.clangStdenv; } {
+             packages = with pkgs;
+                [ vulkan-loader
+                  vulkan-validation-layers
+                  vulkan-headers
+                  glfw
+                  shaderc ];
+
+             shellHook = with pkgs; ''
+                export VULKAN_INCLUDE_PATH=${vulkan-headers}/include
+                export VULKAN_LIBRARY_PATH=${vulkan-loader}/lib
+                export GLFW_INCLUDE_PATH=${glfw}/include
+                export GLFW_LIBRARY_PATH=${glfw}/lib
+             '';
+          };
       });
 }
